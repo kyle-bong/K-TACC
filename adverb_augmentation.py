@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 import random
 import requests
-import string
 from kiwipiepy import Kiwi
 import time
 from hanspell import spell_checker
@@ -51,16 +50,17 @@ class AdverbAugmentation():
         print(sentence)
         adverb_list = self._adverb_detector(sentence)
         if adverb_list:
-            for adverb in adverb_list:
-                gloss = self._get_gloss(adverb)
-                sentence = sentence.replace(adverb, gloss)
+            # 부사들 중에서 1개만 랜덤으로 선택합니다.
+            adverb = random.choice(adverb_list)
+            gloss = self._get_gloss(adverb)
+            sentence = sentence.replace(adverb, gloss)
         return sentence
         
 
-adverb_aug = AdverbAugmentation()
+# adverb_aug = AdverbAugmentation()
 
-sentence = "눈이 굉장히 천천히, 그리고 아주 조금씩 하얗게 쌓이고 있다."
+# sentence = "눈이 굉장히 천천히, 그리고 아주 조금씩 하얗게 쌓이고 있다."
 
-result = adverb_aug.adverb_gloss_replacement(sentence)
-print('input: ', sentence)
-print('reuslt: ', result)
+# result = adverb_aug.adverb_gloss_replacement(sentence)
+# print('input: ', sentence)
+# print('reuslt: ', result)
