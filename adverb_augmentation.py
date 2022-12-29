@@ -1,8 +1,7 @@
-    """
-    func 1. adverb to gloss
+"""
+func 1. adverb to gloss
 
-    """
-
+"""
 import re
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -11,22 +10,22 @@ import requests
 import string
 from kiwipiepy import Kiwi
 import time
-from py_hanspell.hanspell import spell_checker
+from hanspell import spell_checker
 
 class AdverbAugmentation():
-    def __init__():
+    def __init__(self):
         self.kiwi = Kiwi()
 
     def _adverb_detector(self, sentence):
-        # Tokenizing    
-        tokenized = mecab.pos(sentence)
 
         # POS info
-        pos_list = [(x[0], x[1]) for x in Kiwi.tokenize(sentence)] # (token, pos)
-            
+        pos_list = [(x[0], x[1]) for x in self.kiwi.tokenize(sentence)] # (token, pos)
+        
+        adverb_list = []
         for pos in pos_list:
             if pos[1] == "MAG" and len(pos[0]) > 1: # 1음절 부사는 제외함.
-                return pos[0]
+                adverb_list.append(pos[0])
+        return adverb_list
 
     def _get_gloss(self, word):
         res = requests.get("https://dic.daum.net/search.do?q=" + word, timeout=5)
@@ -49,8 +48,19 @@ class AdverbAugmentation():
         return meaning.strip()
     
     def adverb_gloss_replacement(self, sentence):
-        # 문장 안에 부사가 존재한다면:
-        adverb = self._adverb_detector(sentence)
-        if adverb:
-            gloss = self._get_gloss(adverb)
-            return sentence.replace(adverb, gloss)
+        print(sentence)
+        adverb_list = self._adverb_detector(sentence)
+        if adverb_list:
+            for adverb in adverb_list:
+                gloss = self._get_gloss(adverb)
+                sentence = sentence.replace(adverb, gloss)
+        return sentence
+        
+
+adverb_aug = AdverbAugmentation()
+
+sentence = "눈이 굉장히 천천히, 그리고 아주 조금씩 하얗게 쌓이고 있다."
+
+result = adverb_aug.adverb_gloss_replacement(sentence)
+print('input: ', sentence)
+print('reuslt: ', result)
