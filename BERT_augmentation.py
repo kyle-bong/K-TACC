@@ -1,22 +1,6 @@
-"""
-class
-
-func 1. mask_replacement
-
-func 2. mask_insertion
-
-
-"""
-
-import pandas as pd
-from ast import literal_eval
 import transformers
 import re
 import random
-from collections import defaultdict
-import argparse
-import time
-# from py_hanspell.hanspell import spell_checker
 
 class BERT_Augmentation():
     def __init__(self):
@@ -116,29 +100,18 @@ class BERT_Augmentation():
 
         return unmask_sentence
 
+# BERT_aug = BERT_Augmentation()
 
-# roberta_model_name = 'klue/roberta-base'
-# roberta_model = transformers.AutoModelForMaskedLM.from_pretrained(roberta_model_name, local_files_only=True)
-# roberta_tokenizer = transformers.AutoTokenizer.from_pretrained(roberta_model_name)
-# roberta_unmasker = transformers.pipeline("fill-mask", model=roberta_model, tokenizer=roberta_tokenizer)
+# func = BERT_aug.random_masking_replacement
 
-# electra_model_name = 'monologg/koelectra-base-v3-generator'
-# electra_model = transformers.AutoModelForMaskedLM.from_pretrained(electra_model_name, local_files_only=True)
-# electra_tokenizer = transformers.AutoTokenizer.from_pretrained(electra_model_name)
-# electra_unmasker = transformers.pipeline("fill-mask", model=electra_model, tokenizer=electra_tokenizer)
+# ins = BERT_aug.random_masking_insertion
 
-BERT_aug = BERT_Augmentation()
-
-func = BERT_aug.random_masking_replacement
-
-ins = BERT_aug.random_masking_insertion
-
-sentence = "이순신은 조선 중기의 무신이라고 전해진다."
-for _ in range(5):
-    result = func(sentence, span=2)
-    print(result)
+# sentence = "이순신은 조선 중기의 무신이라고 전해진다."
+# for _ in range(5):
+#     result = func(sentence, span=2)
+#     print(result)
 
 
-for _ in range(5):
-    result = ins(sentence)
-    print(result)
+# for _ in range(5):
+#     result = ins(sentence)
+#     print(result)

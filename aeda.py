@@ -15,7 +15,7 @@ def aeda(sentence):
     return ' '.join(sentence).strip()
 
 
-sen = "안녕 나는 클레오파트라 세상에서 제일가는 포테이토칩 안녕 나는 클레오파트라 세상에서 제일가는 포테이토칩 안녕 나는 클레오파트라 세상에서 제일가는 포테이토칩"
-result = aeda(sen)
-print(sen)
-print(result)
+# sen = "안녕 나는 클레오파트라 세상에서 제일가는 포테이토칩 안녕 나는 클레오파트라 세상에서 제일가는 포테이토칩 안녕 나는 클레오파트라 세상에서 제일가는 포테이토칩"
+# result = aeda(sen)
+# print(sen)
+# print(result)
