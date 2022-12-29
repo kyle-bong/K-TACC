@@ -18,23 +18,14 @@ import argparse
 import time
 # from py_hanspell.hanspell import spell_checker
 
-
 class BERT_Augmentation():
     def __init__(self):
-        # self.roberta_model_name = 'klue/roberta-base'
-        # self.roberta_model = transformers.AutoModelForMaskedLM.from_pretrained(self.roberta_model_name)
-        # self.roberta_tokenizer = transformers.AutoTokenizer.from_pretrained(self.roberta_model_name)
-        # self.robert_unmasker = transformers.pipeline("fill-mask", model=self.roberta_model, tokenizer=self.roberta_tokenizer)
-
-        # self.electra_model_name = 'monologg/koelectra-base-v3-generator'
-        # self.electra_model = transformers.AutoModelForMaskedLM.from_pretrained(self.electra_model_name)
-        # self.electra_tokenizer = transformers.AutoTokenizer.from_pretrained(self.electra_model_name)
-        # self.electra_unmasker = transformers.pipeline("fill-mask", model=self.electra_model, tokenizer=self.electra_tokenizer)
+        self.electra_model_name = 'monologg/koelectra-base-v3-generator'
+        self.electra_model = transformers.AutoModelForMaskedLM.from_pretrained(self.electra_model_name)
+        self.electra_tokenizer = transformers.AutoTokenizer.from_pretrained(self.electra_model_name)
+        self.electra_unmasker = transformers.pipeline("fill-mask", model=self.electra_model, tokenizer=self.electra_tokenizer)
         
-        self.span = 1
-
-    ## TODO: span 적용하기
-    def random_masking_replacement(self, sentence, mask, unmasker, span=1):
+    def random_masking_replacement(self, sentence, span=1):
         """Masking random eojeol of the sentence, and recover it using PLM.
 
         Args:
@@ -43,9 +34,17 @@ class BERT_Augmentation():
             unmasker (_type_): _description_
             span
         """
+        assert span < len(sentence)
+
+        mask = self.electra_tokenizer.mask_token
+        unmasker = self.electra_unmasker
+
         unmask_sentence = sentence.split()
-        random_idx = random.randint(0, len(unmask_sentence)-1)
+        random_idx = random.randint(0, len(unmask_sentence)-1 - (span-1))
         unmask_sentence[random_idx] = mask
+        # 원 문장에서 span 길이만큼 삭제. (span 길이만큼 masking하기 위함.)
+        del unmask_sentence[random_idx+1:random_idx+1+span]
+        # print('unmask_sentnece: ', unmask_sentence)
         unmask_result = unmasker(" ".join(unmask_sentence))
 
         # unmask_token에 '##" 이나 특수기호만 들어가는 것을 방지.
@@ -78,7 +77,9 @@ class BERT_Augmentation():
         return unmask_sentence
 
 
-    def random_masking_insertion(self, sentence, mask, unmasker):
+    def random_masking_insertion(self, sentence):
+        mask = self.electra_tokenizer.mask_token
+        unmasker = self.electra_unmasker
         unmask_sentence = sentence.split()
         random_idx = random.randint(0, len(unmask_sentence)-1)
         unmask_sentence.insert(random_idx, mask)
@@ -116,37 +117,28 @@ class BERT_Augmentation():
         return unmask_sentence
 
 
-roberta_model_name = 'klue/roberta-base'
-roberta_model = transformers.AutoModelForMaskedLM.from_pretrained(roberta_model_name, local_files_only=True)
-roberta_tokenizer = transformers.AutoTokenizer.from_pretrained(roberta_model_name)
-roberta_unmasker = transformers.pipeline("fill-mask", model=roberta_model, tokenizer=roberta_tokenizer)
+# roberta_model_name = 'klue/roberta-base'
+# roberta_model = transformers.AutoModelForMaskedLM.from_pretrained(roberta_model_name, local_files_only=True)
+# roberta_tokenizer = transformers.AutoTokenizer.from_pretrained(roberta_model_name)
+# roberta_unmasker = transformers.pipeline("fill-mask", model=roberta_model, tokenizer=roberta_tokenizer)
 
-electra_model_name = 'monologg/koelectra-base-v3-generator'
-electra_model = transformers.AutoModelForMaskedLM.from_pretrained(electra_model_name, local_files_only=True)
-electra_tokenizer = transformers.AutoTokenizer.from_pretrained(electra_model_name)
-electra_unmasker = transformers.pipeline("fill-mask", model=electra_model, tokenizer=electra_tokenizer)
+# electra_model_name = 'monologg/koelectra-base-v3-generator'
+# electra_model = transformers.AutoModelForMaskedLM.from_pretrained(electra_model_name, local_files_only=True)
+# electra_tokenizer = transformers.AutoTokenizer.from_pretrained(electra_model_name)
+# electra_unmasker = transformers.pipeline("fill-mask", model=electra_model, tokenizer=electra_tokenizer)
 
 BERT_aug = BERT_Augmentation()
 
 func = BERT_aug.random_masking_replacement
-func2 = BERT_aug.random_masking_replacement
 
 ins = BERT_aug.random_masking_insertion
-ins2 = BERT_aug.random_masking_insertion
 
 sentence = "이순신은 조선 중기의 무신이라고 전해진다."
-# for _ in range(5):
-#     result = func(sentence, roberta_tokenizer.mask_token, roberta_unmasker)
-#     print(result)
-
-# for _ in range(5):
-#     result = func2(sentence, electra_tokenizer.mask_token, electra_unmasker)
-#     print(result)
-
 for _ in range(5):
-    result = ins(sentence, roberta_tokenizer.mask_token, roberta_unmasker)
+    result = func(sentence, span=2)
     print(result)
 
+
 for _ in range(5):
-    result = ins2(sentence, electra_tokenizer.mask_token, electra_unmasker)
+    result = ins(sentence)
     print(result)
