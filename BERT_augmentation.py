@@ -19,7 +19,7 @@ import time
 # from py_hanspell.hanspell import spell_checker
 
 
-class BERT_augmentation():
+class BERT_Augmentation():
     def __init__(self):
         # self.roberta_model_name = 'klue/roberta-base'
         # self.roberta_model = transformers.AutoModelForMaskedLM.from_pretrained(self.roberta_model_name)
@@ -126,7 +126,7 @@ electra_model = transformers.AutoModelForMaskedLM.from_pretrained(electra_model_
 electra_tokenizer = transformers.AutoTokenizer.from_pretrained(electra_model_name)
 electra_unmasker = transformers.pipeline("fill-mask", model=electra_model, tokenizer=electra_tokenizer)
 
-BERT_aug = BERT_augmentation()
+BERT_aug = BERT_Augmentation()
 
 func = BERT_aug.random_masking_replacement
 func2 = BERT_aug.random_masking_replacement
