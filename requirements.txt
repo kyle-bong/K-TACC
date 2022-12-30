@@ -1,6 +1,16 @@
+# for augmentation
 torch
 transformers
 kiwipiepy
 requests
 selenium
 bs4
+
+# for fine-tuning
+pyYAML
+pytorch-lightning
+tqdm
+torchmetrics
+numpy
+pandas
+omegaconf
