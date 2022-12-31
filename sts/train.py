@@ -20,7 +20,7 @@ def main(cfg):
     checkpoint_callback = ModelCheckpoint(dirpath="saved/", filename=f'{cfg.model.saved_name}')
 
     # Train & Test
-    trainer = pl.Trainer(max_epohcs=cfg.train.max_epoch,
+    trainer = pl.Trainer(max_epochs=cfg.train.max_epoch,
         log_every_n_steps=cfg.train.logging_step,
         callbacks=[checkpoint_callback])
     
@@ -29,10 +29,10 @@ def main(cfg):
 
 if __name__ == '__main__':
     # receive arguments
-    parser = argparse.ArgmentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='')
     args, _ = parser.parse_known_args()
-    cfg = OmegaConf.load(f'./config/{args.config}.yaml')
+    cfg = OmegaConf.load(f'./{args.config}.yaml')
 
     # seed
     seed_everything(cfg.train.seed)
