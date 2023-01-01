@@ -11,6 +11,5 @@ pyYAML
 pytorch-lightning
 tqdm
 torchmetrics
-numpy
 pandas
 omegaconf

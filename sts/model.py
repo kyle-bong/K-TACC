@@ -30,7 +30,6 @@ class Model(pl.LightningModule):
         return x
     
     def training_step(self, batch, batch_idx):
-        print('batch: ', batch)
         x, y = batch
         logits = self(x)
         loss = self.loss_func(logits, y.float())
@@ -42,7 +41,7 @@ class Model(pl.LightningModule):
         logits = self(x)
         loss = self.loss_func(logits, y.float())
         self.log("val_loss", loss)
-        pearson_corr = torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze().float())
+        pearson_corr = torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze())
         self.log("val_pearson", pearson_corr)
 
         return {'val_loss':loss, 'val_pearson_corr':pearson_corr}

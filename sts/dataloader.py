@@ -15,7 +15,7 @@ class Dataset(torch.utils.data.Dataset):
         if len(self.targets) == 0:
             return torch.tensor(self.inputs[idx])
         else:
-            return torch.tensor(self.inputs[idx]), torch.tensor(self.targets[idx])
+            return torch.tensor(self.inputs[idx]), torch.tensor(self.targets[idx]).unsqueeze(0)
         
     def __len__(self):
         return len(self.inputs)

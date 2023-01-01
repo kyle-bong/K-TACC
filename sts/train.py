@@ -20,7 +20,7 @@ def main(cfg):
     checkpoint_callback = ModelCheckpoint(dirpath="saved/", filename=f'{cfg.model.saved_name}')
 
     # Train & Test
-    trainer = pl.Trainer(max_epochs=cfg.train.max_epoch,
+    trainer = pl.Trainer(gpus=1, max_epochs=cfg.train.max_epoch,
         log_every_n_steps=cfg.train.logging_step,
         callbacks=[checkpoint_callback])
     
