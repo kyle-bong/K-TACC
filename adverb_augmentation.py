@@ -1,7 +1,3 @@
-"""
-func 1. adverb to gloss
-
-"""
 import re
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -47,7 +43,6 @@ class AdverbAugmentation():
         return meaning.strip()
     
     def adverb_gloss_replacement(self, sentence):
-        print(sentence)
         adverb_list = self._adverb_detector(sentence)
         if adverb_list:
             # 부사들 중에서 1개만 랜덤으로 선택합니다.
