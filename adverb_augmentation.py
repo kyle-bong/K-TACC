@@ -5,12 +5,11 @@ import random
 import requests
 from kiwipiepy import Kiwi
 import time
-from hanspell import spell_checker
-
+from quickspacer import Spacer
 class AdverbAugmentation():
     def __init__(self):
         self.kiwi = Kiwi()
-
+        self.spacing = Spacer().space
     def _adverb_detector(self, sentence):
 
         # POS info
@@ -39,8 +38,9 @@ class AdverbAugmentation():
         meaning = ' '.join(meaning)
         
         # 띄어쓰기 오류 교정 (위 에 -> 위에)
-        meaning = spell_checker.check(meaning).as_dict()['checked'].strip()
-        return meaning.strip()
+        # meaning = spell_checker.check(meaning).as_dict()['checked'].strip()
+        meaning = self.spacing([meaning.replace(" ", "")])
+        return meaning[0].strip()
     
     def adverb_gloss_replacement(self, sentence):
         adverb_list = self._adverb_detector(sentence)
@@ -50,12 +50,3 @@ class AdverbAugmentation():
             gloss = self._get_gloss(adverb)
             sentence = sentence.replace(adverb, gloss)
         return sentence
-        
-
-# adverb_aug = AdverbAugmentation()
-
-# sentence = "눈이 굉장히 천천히, 그리고 아주 조금씩 하얗게 쌓이고 있다."
-
-# result = adverb_aug.adverb_gloss_replacement(sentence)
-# print('input: ', sentence)
-# print('reuslt: ', result)
