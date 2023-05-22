@@ -6,7 +6,7 @@ pip-wheel-metadata/
 lightning_logs/
 .vscode/
 py-hanspell/
-datasets/
+# datasets/
 
 # Documentations
 docs/venv*/
@@ -154,7 +154,7 @@ ENV/
 
 # data
 .data/
-Datasets/
+# Datasets/
 mnist/
 MNIST/
 tests/legacy/checkpoints/
