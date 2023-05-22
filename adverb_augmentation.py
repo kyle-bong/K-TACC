@@ -23,7 +23,7 @@ class AdverbAugmentation():
 
     def _get_gloss(self, word):
         res = requests.get("https://dic.daum.net/search.do?q=" + word, timeout=5)
-        time.sleep(random.uniform(2,4))
+        time.sleep(random.uniform(1,3))
         soup = BeautifulSoup(res.content, "html.parser")
         try:
             # 첫 번째 뜻풀이.
@@ -47,6 +47,10 @@ class AdverbAugmentation():
         if adverb_list:
             # 부사들 중에서 1개만 랜덤으로 선택합니다.
             adverb = random.choice(adverb_list)
-            gloss = self._get_gloss(adverb)
-            sentence = sentence.replace(adverb, gloss)
+            try:
+                gloss = self._get_gloss(adverb)
+                sentence = sentence.replace(adverb, gloss)
+            except:
+                print('except: ', sentence)
+                pass
         return sentence
