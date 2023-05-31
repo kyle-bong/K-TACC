@@ -5,6 +5,8 @@ import transformers
 import torch
 import torchmetrics
 import pytorch_lightning as pl
+from torch.optim.lr_scheduler import CosineAnnealingLR, ExponentialLR
+import numpy as np
 
 class Model(pl.LightningModule):
     def __init__(self, cfg):
@@ -33,16 +35,16 @@ class Model(pl.LightningModule):
         x, y = batch
         logits = self(x)
         loss = self.loss_func(logits, y.float())
-        self.log("train_loss", loss)
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
         logits = self(x)
         loss = self.loss_func(logits, y.float())
-        self.log("val_loss", loss)
+        self.log("val_loss", loss, on_epoch=True, prog_bar=True, logger=True)
         pearson_corr = torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze())
-        self.log("val_pearson", pearson_corr)
+        self.log("val_pearson", pearson_corr, on_epoch=True, prog_bar=True, logger=True)
 
         return {'val_loss':loss, 'val_pearson_corr':pearson_corr}
     
@@ -54,12 +56,8 @@ class Model(pl.LightningModule):
         return test_pearson_corr
     
     def configure_optimizers(self):
-        optimizer = self.optimizer
-        scheduler = transformers.get_cosine_schedule_with_warmup(
-            self.optimizer,
-            num_warmup_steps=self.warmup_ratio * self.trainer.estimated_stepping_batches,
-            num_training_steps=self.trainer.estimated_stepping_batches
-        )
+        optimizer = torch.optim.AdamW(params=self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2, eta_min=0.0, last_epoch=-1)
         scheduler = {'scheduler':scheduler, 'interval':'step', 'frequency':1}
 
         return [optimizer], [scheduler]
