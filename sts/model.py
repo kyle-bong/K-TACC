@@ -45,11 +45,11 @@ class Model(pl.LightningModule):
         x, y = batch
         logits = self(x)
         loss = self.loss_func(logits, y.float())
-        self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("val_loss", loss, prog_bar=True, logger=True)
         pearson_corr = torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze())
-        self.log("val_pearson", pearson_corr, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("val_pearson", pearson_corr, prog_bar=True, logger=True)
 
-        return {'val_loss':loss, 'val_pearson':pearson_corr}
+        return {'val_loss':loss, 'val_pearson_corr':pearson_corr}
     
     def test_step(self, batch, batch_idx):
         x, y = batch
