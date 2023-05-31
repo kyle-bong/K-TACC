@@ -23,14 +23,14 @@ class AdverbAugmentation():
 
     def _get_gloss(self, word):
         res = requests.get("https://dic.daum.net/search.do?q=" + word, timeout=5)
-        time.sleep(random.uniform(1,3))
+        time.sleep(random.uniform(0.5,2.5))
         soup = BeautifulSoup(res.content, "html.parser")
         try:
             # 첫 번째 뜻풀이.
             meaning = soup.find('span', class_='txt_search')
         except AttributeError:
             return word
-        if meaning == None:
+        if not meaning:
             return word
         
         # parsing 결과에서 한글만 추출
