@@ -15,7 +15,7 @@ from pytorch_lightning.loggers import WandbLogger
 
 def main(cfg):
     # Load dataloader & model
-    dataloader = Dataloader(cfg, num_workers=8)
+    dataloader = Dataloader(cfg)
     model = Model(cfg)
     lr_monitor = LearningRateMonitor(logging_interval='step')
 
