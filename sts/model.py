@@ -7,6 +7,8 @@ import torchmetrics
 import pytorch_lightning as pl
 from torch.optim.lr_scheduler import CosineAnnealingLR, ExponentialLR
 import numpy as np
+import wandb
+from pytorch_lightning.loggers import WandbLogger
 
 class Model(pl.LightningModule):
     def __init__(self, cfg):
