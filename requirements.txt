@@ -14,3 +14,6 @@ torchmetrics
 pandas
 omegaconf
 quickspacer
+
+# dev
+wandb
