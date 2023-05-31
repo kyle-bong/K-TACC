@@ -15,7 +15,7 @@ from pytorch_lightning.loggers import WandbLogger
 
 def main(cfg):
     # Load dataloader & model
-    dataloader = Dataloader(cfg)
+    dataloader = Dataloader(cfg, num_workers=8)
     model = Model(cfg)
     lr_monitor = LearningRateMonitor(logging_interval='step')
 
@@ -24,15 +24,15 @@ def main(cfg):
                               log_model="all")
     # checkpoint config
     checkpoint_callback = ModelCheckpoint(dirpath='saved/', 
-                                          monitor='val_loss',
-                                          mode='min',
+                                          monitor='val_pearson',
+                                          mode='max',
                                           filename=f'{cfg.model.saved_name}',
-                                          save_top_k=2)
+                                          save_top_k=1)
 
     # Train & Test
-    trainer = pl.Trainer(gpus=1, max_epochs=cfg.train.max_epoch,
-        log_every_n_steps=1,
-        val_check_interval=0.5,
+    trainer = pl.Trainer(accelerator="gpu", max_epochs=cfg.train.max_epoch,
+        log_every_n_steps=cfg.train.logging_step,
+        val_check_interval=1.0,
         callbacks=[checkpoint_callback, lr_monitor],
         logger=wandb_logger)
     

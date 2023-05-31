@@ -80,7 +80,7 @@ class Dataloader(pl.LightningDataModule):
             batch_size=self.batch_size,
             shuffle=self.shuffle)
     
-    def dev_dataloader(self):
+    def val_dataloader(self):
         return torch.utils.data.DataLoader(self.dev_dataset,
             batch_size=self.batch_size,
             shuffle=False)
