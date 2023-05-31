@@ -16,6 +16,7 @@ class Model(pl.LightningModule):
         self.lr = cfg.train.learning_rate
         self.drop_out = cfg.train.drop_out
         self.warmup_ratio = cfg.train.warmup_ratio
+        self.weight_decay = cfg.train.weight_decay
         self.plm = transformers.AutoModelForSequenceClassification.from_pretrained(
             pretrained_model_name_or_path=self.model_name,
             num_labels=1,

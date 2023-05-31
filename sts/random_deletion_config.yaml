@@ -1,16 +1,16 @@
 path:
-    train_path: datasets/klue-sts-v1.1_train_random_masking_insertion_augset.json
+    train_path: datasets/klue-sts-v1.1_train_rd_augset.json
     dev_path: datasets/klue-sts-v1.1_dev.json
     test_path: datasets/klue-sts-v1.1_dev.json
 
 data:
     shuffle: True
-    augmentation: False
+    augmentation: True
     max_length : 128
 
 model:
   model_name: 'klue/roberta-base'
-  saved_name: 'rmi_model'
+  saved_name: 'eda_random_deletion_model'
 
 train:
   seed: 2023
@@ -20,3 +20,4 @@ train:
   logging_step: 100
   drop_out: 0.1
   warmup_ratio: 0.1
+  weight_decay: 0.1
