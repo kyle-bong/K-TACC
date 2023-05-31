@@ -17,7 +17,7 @@ def main(cfg):
     model = Model(cfg)
 
     # checkpoint config
-    checkpoint_callback = ModelCheckpoint(dirpath="saved/", 
+    checkpoint_callback = ModelCheckpoint(dirpath="./saved/", 
                                           filename=f'{cfg.model.saved_name}',
                                           save_top_k=1,
                                           monitor='val_pearson',
