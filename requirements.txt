@@ -8,9 +8,9 @@ bs4
 
 # for fine-tuning
 pyYAML
-pytorch-lightning==1.6.3
+pytorch-lightning==1.9.1
 tqdm
 torchmetrics
 pandas
 omegaconf
-pip install quickspacer
+quickspacer
