@@ -17,7 +17,11 @@ def main(cfg):
     model = Model(cfg)
 
     # checkpoint config
-    checkpoint_callback = ModelCheckpoint(dirpath="saved/", filename=f'{cfg.model.saved_name}')
+    checkpoint_callback = ModelCheckpoint(dirpath="saved/", 
+                                          filename=f'{cfg.model.saved_name}',
+                                          save_top_k=1,
+                                          monitor='val_pearson',
+                                          mode='max')
 
     # Train & Test
     trainer = pl.Trainer(gpus=1, max_epochs=cfg.train.max_epoch,
