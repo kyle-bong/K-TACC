@@ -3,25 +3,30 @@ import re
 import random
 class BERT_Augmentation():
     def __init__(self):
-        self.electra_model_name = 'monologg/koelectra-base-v3-generator'
-        self.electra_model = transformers.AutoModelForMaskedLM.from_pretrained(self.electra_model_name)
-        self.electra_tokenizer = transformers.AutoTokenizer.from_pretrained(self.electra_model_name)
-        self.electra_unmasker = transformers.pipeline("fill-mask", model=self.electra_model, tokenizer=self.electra_tokenizer)
+        self.model_name = 'klue/roberta-base'
+        self.model = transformers.AutoModelForMaskedLM.from_pretrained(self.model_name)
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name)
+        self.unmasker = transformers.pipeline("fill-mask", model=self.model, tokenizer=self.tokenizer)
 
-    def random_masking_replacement(self, sentence, span=1):
+    def random_masking_replacement(self, sentence, span_ratio=0.15):
         """Masking random eojeol of the sentence, and recover them using PLM.
 
         Args:
             sentence (str): Source sentence
-            span (int): Span of masking
+            span_ratio (int): Span ratio of masking
 
         Returns:
-          str: Masked and recovered sentence
+          str: Recovered sentence
         """
-        assert span < len(sentence.split())
+        
+        span = max(1, int(len(sentence.split()) * span_ratio))
+        
+        # 문장의 어절 수 - 1이 span 보다 짧다면 원문장을 리턴합니다.
+        if len(sentence.split())-1 < span:
+            return sentence
 
-        mask = self.electra_tokenizer.mask_token
-        unmasker = self.electra_unmasker
+        mask = self.tokenizer.mask_token
+        unmasker = self.unmasker
 
         unmask_sentence = sentence
         random_idx = random.randint(0, len(unmask_sentence.split())-1 - span)
@@ -36,18 +41,19 @@ class BERT_Augmentation():
 
         return unmask_sentence
 
-    def random_masking_insertion(self, sentence, num=1):
-        mask = self.electra_tokenizer.mask_token
-        unmasker = self.electra_unmasker
+    def random_masking_insertion(self, sentence, span_ratio=0.15):
+        span = max(1, int(len(sentence.split()) * span_ratio))
+        mask = self.tokenizer.mask_token
+        unmasker = self.unmasker
 
         # Recover
         unmask_sentence = sentence
-        random_idx = random.randint(0, len(unmask_sentence.split())-1)
+        random_idx = random.randint(-1, len(unmask_sentence.split()))
         
-        for _ in range(num):
-          unmask_sentence = unmask_sentence.split()
-          unmask_sentence.insert(random_idx, mask)
-          unmask_sentence = unmasker(" ".join(unmask_sentence))[0]['sequence']
+        for _ in range(span):
+            unmask_sentence = unmask_sentence.split()
+            unmask_sentence.insert(random_idx, mask)
+            unmask_sentence = unmasker(" ".join(unmask_sentence))[0]['sequence']
 
         unmask_sentence = unmask_sentence.replace("  ", " ")
 
