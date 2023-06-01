@@ -1,5 +1,5 @@
 path:
-    train_path: datasets/klue-sts-v1.1_train_random_masking_replacement_augset_span2.json
+    train_path: datasets/klue-sts-v1.1_train_random_masking_replacement_augset_span_0.30.json
     dev_path: datasets/klue-sts-v1.1_dev.json
     test_path: datasets/klue-sts-v1.1_dev.json
 
