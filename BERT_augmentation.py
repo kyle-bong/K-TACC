@@ -23,8 +23,8 @@ class BERT_Augmentation():
         
         span = max(1, int(round(len(sentence.split()) * span_ratio)))
         
-        # 문장의 어절 수 - 1이 span 보다 짧다면 원문장을 리턴합니다.
-        if len(sentence.split())-1 < span:
+        # 문장의 어절 수가 1 이하라면 원문장을 그대로 리턴합니다.
+        if len(sentence.split()) <= 1:
             return sentence
 
         mask = self.tokenizer.mask_token
