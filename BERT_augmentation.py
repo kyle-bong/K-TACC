@@ -1,6 +1,8 @@
 import transformers
 import re
 import random
+import numpy as np
+
 class BERT_Augmentation():
     def __init__(self):
         self.model_name = 'monologg/koelectra-base-v3-generator'
@@ -19,7 +21,7 @@ class BERT_Augmentation():
           str: Recovered sentence
         """
         
-        span = max(1, int(len(sentence.split()) * span_ratio))
+        span = max(1, int(round(len(sentence.split()) * span_ratio)))
         
         # 문장의 어절 수 - 1이 span 보다 짧다면 원문장을 리턴합니다.
         if len(sentence.split())-1 < span:
@@ -42,10 +44,11 @@ class BERT_Augmentation():
         return unmask_sentence
 
     def random_masking_insertion(self, sentence, span_ratio=0.15):
-        span = max(1, int(len(sentence.split()) * span_ratio))
+        
+        span = max(1, int(round(len(sentence.split()) * span_ratio)))
         mask = self.tokenizer.mask_token
         unmasker = self.unmasker
-
+        
         # Recover
         unmask_sentence = sentence
         random_idx = random.randint(-1, len(unmask_sentence.split()))
