@@ -3,7 +3,7 @@ import re
 import random
 class BERT_Augmentation():
     def __init__(self):
-        self.model_name = 'klue/roberta-base'
+        self.model_name = 'monologg/koelectra-base-v3-generator'
         self.model = transformers.AutoModelForMaskedLM.from_pretrained(self.model_name)
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name)
         self.unmasker = transformers.pipeline("fill-mask", model=self.model, tokenizer=self.tokenizer)
