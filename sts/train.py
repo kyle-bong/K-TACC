@@ -20,14 +20,14 @@ def main(cfg):
     lr_monitor = LearningRateMonitor(logging_interval='step')
 
     wandb_logger = WandbLogger(project='korean_linguistic_augmentation',
-                              name=cfg.model.saved_name,
+                              name=f'{cfg.model.saved_name}_{cfg.train.learning_rate}',
                               log_model="all")
     # checkpoint config
     checkpoint_callback = ModelCheckpoint(dirpath='saved/', 
                                           monitor='val_pearson',
                                           mode='max',
                                           filename=f'{cfg.model.saved_name}',
-                                          save_top_k=1)
+                                          save_top_k=0)
 
     # Train & Test
     trainer = pl.Trainer(accelerator="gpu", max_epochs=cfg.train.max_epoch,
