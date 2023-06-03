@@ -2,10 +2,11 @@ import os
 import sys
 
 import transformers
+from transformers import get_cosine_schedule_with_warmup
 import torch
 import torchmetrics
 import pytorch_lightning as pl
-from torch.optim.lr_scheduler import CosineAnnealingLR, ExponentialLR
+from torch.optim.lr_scheduler import CosineAnnealingLR, ExponentialLR, OneCycleLR
 import numpy as np
 import wandb
 from pytorch_lightning.loggers import WandbLogger
@@ -25,6 +26,8 @@ class Model(pl.LightningModule):
             hidden_dropout_prob=self.drop_out,
             attention_probs_dropout_prob=self.drop_out
         )
+        self.epoch = cfg.train.max_epoch
+        self.batch_size = cfg.train.batch_size
 
         self.loss_func = torch.nn.L1Loss()
         self.optimizer = torch.optim.AdamW(params=self.parameters(), lr=self.lr)
@@ -60,7 +63,10 @@ class Model(pl.LightningModule):
     
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(params=self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2, eta_min=self.lr*0.01, last_epoch=-1)
+        # scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2, eta_min=self.lr*0.01, last_epoch=-1)
+        scheduler = get_cosine_schedule_with_warmup(optimizer, num_warmup_steps=self.warmup_ratio*self.trainer.estimated_stepping_batches,
+                                                    num_training_steps=self.trainer.estimated_stepping_batches)
+        # scheduler = ExponentialLR(optimizer, gamma=0.5)
         scheduler = {'scheduler':scheduler, 'interval':'step', 'frequency':1}
 
         return [optimizer], [scheduler]
