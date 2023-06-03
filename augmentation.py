@@ -5,6 +5,7 @@ from adverb_augmentation import AdverbAugmentation
 from aeda import aeda
 from tqdm import tqdm
 from multiprocessing import Pool
+import joblib
 from functools import partial
 import numpy as np
 tqdm.pandas()
@@ -18,70 +19,60 @@ adverb_gloss_replacement = adverb_aug.adverb_gloss_replacement
 orig_train = pd.read_json('sts/datasets/klue-sts-v1.1_train.json')
 
 
-def apply_random_masking_replacement(df, span_ratio):
-    df['sentence1'] = df['sentence1'].progress_apply(lambda x: random_masking_replacement(x, span_ratio=span_ratio))
-    df['sentence2'] = df['sentence2'].progress_apply(lambda x: random_masking_replacement(x, span_ratio=span_ratio))
-    return df
+def apply_random_masking_replacement(x, span_ratio=0.15):
+    return random_masking_replacement(x, span_ratio=span_ratio)
 
 # dataset
-span_ratio = 0.15
-    
-random_masking_replacement_train = orig_train.copy()
-with Pool(processes=8) as pool:
-    random_masking_replacement_train = pool.starmap(apply_random_masking_replacement(random_masking_replacement_train, span_ratio))
-    
-# random_masking_replacement_train['sentence1'] = random_masking_replacement_train['sentence1'].progress_apply(lambda x: random_masking_replacement(x, span_ratio=span_ratio))
-# random_masking_replacement_train['sentence2'] = random_masking_replacement_train['sentence2'].progress_apply(lambda x: random_masking_replacement(x, span_ratio=span_ratio))
-random_masking_replacement_augset = pd.concat([orig_train, random_masking_replacement_train])
-random_masking_replacement_augset.drop_duplicates(['sentence1', 'sentence2'], inplace=True)
-print(len(random_masking_replacement_augset))
+ 
+# random_masking_replacement_train = orig_train.copy()
+# pool = joblib.Parallel(n_jobs=8, prefer='threads')
+# mapper = joblib.delayed(apply_random_masking_replacement)
+# tasks = [mapper(row) for i, row in random_masking_replacement_train['sentence1'].items()]
+# random_masking_replacement_train['sentence1'] = pool(tqdm(tasks))
 
-random_masking_replacement_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_random_masking_replacement_augset_span_0.15.json')
+# pool = joblib.Parallel(n_jobs=8, prefer='threads')
+# mapper = joblib.delayed(apply_random_masking_replacement)
+# tasks = [mapper(row) for i, row in random_masking_replacement_train['sentence2'].items()]
+# random_masking_replacement_train['sentence2'] = pool(tqdm(tasks))
 
-# random masking (span_ratio=0.30)
-span_ratio=0.30
-random_masking_replacement_train = orig_train.copy()
-with Pool(processes=8) as pool:
-    random_masking_replacement_train = pool.starmap(apply_random_masking_replacement(random_masking_replacement_train, span_ratio))
+# random_masking_replacement_augset = pd.concat([orig_train, random_masking_replacement_train])
+# random_masking_replacement_augset.drop_duplicates(['sentence1', 'sentence2'], inplace=True)
+# print(len(random_masking_replacement_augset))
 
-# random_masking_replacement_train['sentence1'] = random_masking_replacement_train['sentence1'].progress_apply(lambda x: random_masking_replacement(x, span_ratio=span_ratio))
-# random_masking_replacement_train['sentence2'] = random_masking_replacement_train['sentence2'].progress_apply(lambda x: random_masking_replacement(x, span_ratio=span_ratio))
-random_masking_replacement_augset = pd.concat([orig_train, random_masking_replacement_train])
-random_masking_replacement_augset.drop_duplicates(['sentence1', 'sentence2'], inplace=True)
-print(len(random_masking_replacement_augset))
-
-random_masking_replacement_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_random_masking_replacement_augset_span_0.30.json')
+# random_masking_replacement_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_random_masking_replacement_augset_span_0.15.json')
 
 
-# # random insertion 
-def apply_random_masking_insertion(df, span_ratio):
-    df['sentence1'] = df['sentence1'].progress_apply(lambda x: random_masking_insertion(x, span_ratio=span_ratio))
-    df['sentence2'] = df['sentence2'].progress_apply(lambda x: random_masking_insertion(x, span_ratio=span_ratio))
-    return df
+# random insertion 
+def apply_random_masking_insertion(x, span_ratio=0.15):
+    return random_masking_insertion(x, span_ratio=span_ratio)
 
 span_ratio = 0.15
 random_masking_insertion_train = orig_train.copy()
-with Pool(processes=8) as pool:
-    random_masking_insertion_train = pool.starmap(apply_random_masking_insertion(random_masking_insertion_train, span_ratio))
-# random_masking_insertion_train['sentence1'] = random_masking_insertion_train['sentence1'].progress_apply(lambda x: random_masking_insertion(x, span_ratio=span_ratio))
-# random_masking_insertion_train['sentence2'] = random_masking_insertion_train['sentence2'].progress_apply(lambda x: random_masking_insertion(x, span_ratio=span_ratio))
+pool = joblib.Parallel(n_jobs=8, prefer='threads')
+mapper = joblib.delayed(apply_random_masking_insertion)
+tasks = [mapper(row) for i, row in random_masking_insertion_train['sentence1'].items()]
+random_masking_insertion_train['sentence1'] = pool(tqdm(tasks))
+
+tasks = [mapper(row) for i, row in random_masking_insertion_train['sentence2'].items()]
+random_masking_insertion_train['sentence2'] = pool(tqdm(tasks))
+
 random_masking_insertion_augset = pd.concat([orig_train, random_masking_insertion_train])
 random_masking_insertion_augset.drop_duplicates(['sentence1', 'sentence2'], inplace=True)
 print(len(random_masking_insertion_augset))
 random_masking_insertion_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_random_masking_insertion_augset_span_0.15.json')
 
 
-span_ratio=0.30
-random_masking_insertion_train = orig_train.copy()
-# random_masking_insertion_train['sentence1'] = random_masking_insertion_train['sentence1'].progress_apply(lambda x: random_masking_insertion(x, span_ratio=span_ratio))
-# random_masking_insertion_train['sentence2'] = random_masking_insertion_train['sentence2'].progress_apply(lambda x: random_masking_insertion(x, span_ratio=span_ratio))
-with Pool(processes=8) as pool:
-    random_masking_insertion_train = pool.starmap(apply_random_masking_insertion(random_masking_insertion_train, span_ratio))
+# span_ratio=0.30
+# random_masking_insertion_train = orig_train.copy()
+# # random_masking_insertion_train['sentence1'] = random_masking_insertion_train['sentence1'].progress_apply(lambda x: random_masking_insertion(x, span_ratio=span_ratio))
+# # random_masking_insertion_train['sentence2'] = random_masking_insertion_train['sentence2'].progress_apply(lambda x: random_masking_insertion(x, span_ratio=span_ratio))
+# with Pool(processes=8) as pool:
+#     random_masking_insertion_train = pool.starmap(apply_random_masking_insertion, zip(random_masking_insertion_train, span_ratio))
     
-random_masking_insertion_augset = pd.concat([orig_train, random_masking_insertion_train])
-random_masking_insertion_augset.drop_duplicates(['sentence1', 'sentence2'], inplace=True)
-print(len(random_masking_insertion_augset))
-random_masking_insertion_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_random_masking_insertion_augset_span_0.30.json')
+# random_masking_insertion_augset = pd.concat([orig_train, random_masking_insertion_train])
+# random_masking_insertion_augset.drop_duplicates(['sentence1', 'sentence2'], inplace=True)
+# print(len(random_masking_insertion_augset))
+# random_masking_insertion_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_random_masking_insertion_augset_span_0.30.json')
 
 # # # adverb
 # adverb_train = orig_train.copy()
@@ -115,13 +106,13 @@ from aeda import aeda
 # sr_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_sr_augset.json')
 
 # # random_deletion
-rd_train = orig_train.copy()
-rd_train['sentence1'] = rd_train['sentence1'].apply(lambda x: " ".join(random_deletion(x.split(), 0.15)))
-rd_train['sentence2'] = rd_train['sentence2'].apply(lambda x: " ".join(random_deletion(x.split(), 0.15)))
-rd_augset = pd.concat([orig_train, rd_train])
-rd_augset.drop_duplicates(['sentence1', 'sentence2'], inplace=True)
-print(len(rd_augset))
-rd_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_rd_augset.json')
+# rd_train = orig_train.copy()
+# rd_train['sentence1'] = rd_train['sentence1'].apply(lambda x: " ".join(random_deletion(x.split(), 0.15)))
+# rd_train['sentence2'] = rd_train['sentence2'].apply(lambda x: " ".join(random_deletion(x.split(), 0.15)))
+# rd_augset = pd.concat([orig_train, rd_train])
+# rd_augset.drop_duplicates(['sentence1', 'sentence2'], inplace=True)
+# print(len(rd_augset))
+# rd_augset.reset_index().to_json('sts/datasets/klue-sts-v1.1_train_rd_augset.json')
 
 # # random_swap
 # rs_train = orig_train.copy()
