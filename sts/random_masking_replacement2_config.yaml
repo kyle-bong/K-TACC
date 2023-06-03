@@ -16,7 +16,7 @@ train:
   seed: 2023
   batch_size: 32
   max_epoch: 4
-  learning_rate: 5e-5
+  learning_rate: 3e-5
   logging_step: 100
   drop_out: 0.1
   warmup_ratio: 0.1
