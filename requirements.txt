@@ -5,6 +5,7 @@ kiwipiepy
 requests
 selenium
 bs4
+joblib
 
 # for fine-tuning
 pyYAML
