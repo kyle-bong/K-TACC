@@ -22,10 +22,10 @@ class BERT_Augmentation():
           str: Recovered sentence
         """
         
-        span = max(1, int(round(len(sentence.split()) * span_ratio)))
+        span = int(round(len(sentence.split()) * span_ratio))
         
-        # 품질 유지를 위해, 문장의 어절 수가 3 이하라면 원문장을 그대로 리턴합니다.
-        if len(sentence.split()) <= 3:
+        # 품질 유지를 위해, 문장의 어절 수가 4 이하라면 원문장을 그대로 리턴합니다.
+        if len(sentence.split()) <= 4:
             return sentence
 
         mask = self.tokenizer.mask_token
@@ -41,7 +41,7 @@ class BERT_Augmentation():
         for _ in range(span):
             # 처음과 끝 부분을 [MASK]로 치환 후 추론할 때의 품질이 좋지 않음.
             while cache and random_idx in cache:
-                random_idx = random.randint(1, len(unmask_sentence) - 1)
+                random_idx = random.randint(1, len(unmask_sentence) - 2)
             cache.append(random_idx)
             unmask_sentence[random_idx] = mask
             unmask_sentence = unmasker(" ".join(unmask_sentence))[0]['sequence']
@@ -49,14 +49,11 @@ class BERT_Augmentation():
         unmask_sentence = " ".join(unmask_sentence)
         unmask_sentence = unmask_sentence.replace("  ", " ")
 
-        return unmask_sentence
+        return unmask_sentence.strip()
 
     def random_masking_insertion(self, sentence, span_ratio=0.15):
-        # 품질 유지를 위해, 문장의 어절 수가 3 이하라면 원문장을 그대로 리턴합니다.
-        if len(sentence.split()) <= 3:
-            return sentence
         
-        span = max(1, int(round(len(sentence.split()) * span_ratio)))
+        span = int(round(len(sentence.split()) * span_ratio))
         mask = self.tokenizer.mask_token
         unmasker = self.unmasker
         
@@ -71,4 +68,4 @@ class BERT_Augmentation():
 
         unmask_sentence = unmask_sentence.replace("  ", " ")
 
-        return unmask_sentence
+        return unmask_sentence.strip()
