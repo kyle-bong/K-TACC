@@ -1,7 +1,7 @@
 # 문맥을 고려한 한국어 텍스트 데이터 증강 (Korean Text Augmentation Considering Context, **K-TACC**)
 
 ## Overview
-- 한국어 텍스트 데이터에 노이즈를 가해 데이터를 증강합니다. 이때 BERT based 모델을 활용하여, 원래의 문장과 문맥적으로 유사한 토큰을 삽입하거나 대체하는 형식으로 문장 augmentation을 수행하는 `BERT_augmentation`, 그리고 부사를 부사의 뜻풀이로 교체하여 문장을 변형하는 `Adverb_augmentation` 기법이 있습니다.
+- 한국어 텍스트 데이터에 노이즈를 가해 데이터를 증강합니다. 이때 BERT based 모델을 활용하여, 원래의 문장의 문장을 고려하여, 의미상 자연스러운 토큰을 삽입하거나 대체하는 형식으로 문장 augmentation을 수행하는 `BERT_augmentation`, 그리고 부사를 그 부사의 뜻풀이로 교체하여 문장을 변형하는 `Adverb_augmentation` 기법이 있습니다.
 - 따라서, 기존 EDA(Easy Data Augmentation) 기법에 비해 의미적으로 좀 더 자연스러운 문장 생성이 가능합니다.
 
 ## Usage
@@ -14,7 +14,8 @@ bash install.sh
 `augmentation.ipynb` 파일에서 여러 증강 기법의 샘플을 확인해보실 수 있습니다.
 
 ### 증강 데이터 생성
-실행 전 데이터셋의 경로, 저장할 파일이름 지정이 필요합니다.
+실행 전 데이터셋의 경로, 저장할 파일 이름을 직접 지정해야 합니다.
+Adverb augmentation의 경우 사전 뜻풀이를 크롤링해오기 때문에 시간이 오래걸릴 수 있습니다.
 ```
 python augmentation.py
 ```
