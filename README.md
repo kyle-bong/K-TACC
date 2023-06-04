@@ -24,7 +24,7 @@ python augmentation.py
 실행 전 wandb login이 필요합니다.
 ```
 cd sts
-python train.sh
+bash train.sh
 ```
 
 ## Experiment
