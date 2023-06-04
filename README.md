@@ -6,11 +6,13 @@
 
 ## Usage
 ### 증강 데이터 생성
+실행 전 데이터셋의 경로, 저장할 파일이름 지정이 필요합니다.
 ```
 python augmentation.py
 ```
 
 ### STS 성능 평가
+실행 전 wandb login이 필요합니다.
 ```
 cd sts
 python train.sh
