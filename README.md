@@ -1,8 +1,9 @@
 # 문맥을 고려한 한국어 텍스트 데이터 증강 (Korean Text Augmentation Considering Context, **K-TACC**)
 
 ## Overview
-- 한국어 텍스트 데이터에 노이즈를 가해 데이터를 증강합니다. 이때 BERT based 모델을 활용하여, 원래의 문장의 문장을 고려하여, 의미상 자연스러운 토큰을 삽입하거나 대체하는 형식으로 문장 augmentation을 수행하는 `BERT_augmentation`, 그리고 부사를 그 부사의 뜻풀이로 교체하여 문장을 변형하는 `Adverb_augmentation` 기법이 있습니다.
-- 따라서, 기존 EDA(Easy Data Augmentation) 기법에 비해 의미적으로 좀 더 자연스러운 문장 생성이 가능합니다.
+- `BERT_augmentation` : BERT based 모델을 활용하여, 의미상 자연스러운 토큰을 삽입하거나 대체하는 형식으로 문장 augmentation 수행
+- `Adverb_augmentation`: 부사를 그 부사의 뜻풀이로 교체하는 형식으로 문장 augmentation 수행
+- 기존 EDA(Easy Data Augmentation), AEDA(An Easier Data Augmentation) 기법에 비해 의미적으로 좀 더 자연스러운 문장 생성 가능
 
 ## Usage
 ### 설치
@@ -29,7 +30,7 @@ bash train.sh
 ```
 
 ## Experiment
-EDA(Easy Data Augmentation)과 같은 무작위 단어 삽입, 삭제 등의 기법은 자연스러운 문맥을 고려하지 못한다는 점에서, 어색한 문장을 만들어낼 가능성이 있습니다. 문맥을 고려하여 [MASK] 토큰을 복원할 수 있는 BERT 기반 모델이라면 좀 더 자연스러운 증강이 가능할 것이라는 가설 하에 실험을 진행하였습니다. 각 Augmentation 기법의 성능 실험을 위해, 문장의 의미를 민감하게 파악하여야 하는 Semantic Text Similarity (STS)를 진행하였습니다. base model은 RoBERTa-base(`klue/roberta-base`) 모델로 선정하였습니다.
+문맥을 고려하여 [MASK] 토큰을 복원할 수 있는 BERT 기반 모델이라면 좀 더 자연스러운 증강이 가능할 것이라는 가설 하에 실험을 진행하였습니다. 각 Augmentation 기법의 성능 실험을 위해, 문장의 의미를 민감하게 파악하여야 하는 Semantic Text Similarity (STS)를 진행하였습니다. base model은 RoBERTa-base(`klue/roberta-base`) 모델로 선정하였습니다.
 실험한 증강 기법은 본 repository에서 제안하는 BERT Augmentation 중에서 특정 단어를 maksing한 뒤 다시 복원하는 Random Masking Replacement 기법 및 문장에 [mask] 토큰을 추가하고 이를 복원하는 Random Masking Insertion을 실험하였으며, 기존에 제안되었던 EDA (Easy Data Augmentation), AEDA (An Easier Data Augmentation)을 함께 실험하였습니다.
 
 |Model|Pearson's correlation|
@@ -65,4 +66,5 @@ EDA(Easy Data Augmentation)과 같은 무작위 단어 삽입, 삭제 등의 기
 }
 
 https://github.com/catSirup/KorEDA
+https://github.com/KLUE-benchmark/KLUE-baseline
 ```
