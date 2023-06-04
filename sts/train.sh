@@ -1,14 +1,20 @@
-# # base
-# python train.py --config base_config
+# base
+python train.py --config base_config
 
-# # RMR
-# python train.py --config random_masking_replacement_config
+# Random Masking Replacement
+python train.py --config random_masking_replacement1_config
 
-# # RMI
-# python train.py --config random_masking_insertion_config
+# Random Masking Insertion
+python train.py --config random_masking_insertion1_config
 
-# adverb
-# python train.py --config adverb_config
+# Adverb Augmentation
+python train.py --config adverb_config
+
+# AEDA
+python train.py --config aeda_config
 
 # EDA
-python
+python train.py --config random_deletion_config
+python train.py --config random_insertion_config
+python train.py --config random_swap_config
+python train.py --config random_synonym_replacement_config
