@@ -44,6 +44,19 @@ EDA(Easy Data Augmentation)과 같은 무작위 단어 삽입, 삭제 등의 기
 
 
 ## Reference
-- Karimi, A., Rossi, L., & Prati, A. (2021). Aeda: An easier data augmentation technique for text classification. arXiv preprint arXiv:2108.13230.
-- Wei, J., & Zou, K. (2019). Eda: Easy data augmentation techniques for boosting performance on text classification tasks. arXiv preprint arXiv:1901.11196.
-- https://github.com/catSirup/KorEDA
+```
+@article{karimi2021aeda,
+  title={Aeda: An easier data augmentation technique for text classification},
+  author={Karimi, Akbar and Rossi, Leonardo and Prati, Andrea},
+  journal={arXiv preprint arXiv:2108.13230},
+  year={2021}
+}
+@article{wei2019eda,
+  title={Eda: Easy data augmentation techniques for boosting performance on text classification tasks},
+  author={Wei, Jason and Zou, Kai},
+  journal={arXiv preprint arXiv:1901.11196},
+  year={2019}
+}
+
+https://github.com/catSirup/KorEDA
+```
