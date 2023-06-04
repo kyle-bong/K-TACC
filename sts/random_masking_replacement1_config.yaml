@@ -1,5 +1,5 @@
 path:
-    train_path: datasets/klue-sts-v1.1_train_random_masking_replacement_augset_span_0.15.json
+    train_path: datasets/klue-sts-v1.1_train_random_masking_replacement_augset_0.15.json
     dev_path: datasets/klue-sts-v1.1_dev.json
     test_path: datasets/klue-sts-v1.1_dev.json
 
@@ -10,7 +10,7 @@ data:
 
 model:
   model_name: 'monologg/koelectra-base-v3-discriminator'
-  saved_name: 'random_masking_replacement_1'
+  saved_name: 'random_masking_replacement_1_model'
 
 train:
   seed: 42
