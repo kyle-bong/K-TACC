@@ -5,11 +5,16 @@ kiwipiepy
 requests
 selenium
 bs4
+joblib
 
 # for fine-tuning
 pyYAML
-pytorch-lightning
+pytorch-lightning==1.9.1
 tqdm
 torchmetrics
 pandas
 omegaconf
+quickspacer
+
+# dev
+wandb

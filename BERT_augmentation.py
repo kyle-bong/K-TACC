@@ -1,117 +1,71 @@
 import transformers
 import re
 import random
+import numpy as np
+
 
 class BERT_Augmentation():
     def __init__(self):
-        self.electra_model_name = 'monologg/koelectra-base-v3-generator'
-        self.electra_model = transformers.AutoModelForMaskedLM.from_pretrained(self.electra_model_name)
-        self.electra_tokenizer = transformers.AutoTokenizer.from_pretrained(self.electra_model_name)
-        self.electra_unmasker = transformers.pipeline("fill-mask", model=self.electra_model, tokenizer=self.electra_tokenizer)
-        
-    def random_masking_replacement(self, sentence, span=1):
-        """Masking random eojeol of the sentence, and recover it using PLM.
+        self.model_name = 'monologg/koelectra-base-v3-generator'
+        self.model = transformers.AutoModelForMaskedLM.from_pretrained(self.model_name)
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name)
+        self.unmasker = transformers.pipeline("fill-mask", model=self.model, tokenizer=self.tokenizer)
+        random.seed(42)
+    def random_masking_replacement(self, sentence, span_ratio=0.15):
+        """Masking random eojeol of the sentence, and recover them using PLM.
 
         Args:
-            sentence (_type_): _description_
-            mask_token (_type_): _description_
-            unmasker (_type_): _description_
-            span
+            sentence (str): Source sentence
+            span_ratio (int): Span ratio of masking
+
+        Returns:
+          str: Recovered sentence
         """
-        assert span < len(sentence)
-
-        mask = self.electra_tokenizer.mask_token
-        unmasker = self.electra_unmasker
-
-        unmask_sentence = sentence.split()
-        random_idx = random.randint(0, len(unmask_sentence)-1 - (span-1))
-        unmask_sentence[random_idx] = mask
-        # 원 문장에서 span 길이만큼 삭제. (span 길이만큼 masking하기 위함.)
-        del unmask_sentence[random_idx+1:random_idx+1+span]
-        # print('unmask_sentnece: ', unmask_sentence)
-        unmask_result = unmasker(" ".join(unmask_sentence))
-
-        # unmask_token에 '##" 이나 특수기호만 들어가는 것을 방지.
-        if not re.findall('\W', unmask_result[0]['token_str']):
-            unmask_token = unmask_result[0]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-            
-        elif not re.findall('\W', unmask_result[1]['token_str']):
-            unmask_token = unmask_result[1]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-            
-        elif not re.findall('\W', unmask_result[2]['token_str']):
-            unmask_token = unmask_result[2]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-            
-        elif not re.findall('\W', unmask_result[3]['token_str']):
-            unmask_token = unmask_result[3]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-            
-        elif not re.findall('\W', unmask_result[4]['token_str']):
-            unmask_token = unmask_result[4]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-        else:
-            # 만족하는 경우가 없다면 해당 문장에 대해서는 그냥 masking 취소.
+        
+        span = int(round(len(sentence.split()) * span_ratio))
+        
+        # 품질 유지를 위해, 문장의 어절 수가 4 이하라면 원문장을 그대로 리턴합니다.
+        if len(sentence.split()) <= 4:
             return sentence
 
-        unmask_sentence = " ".join(unmask_sentence) 
+        mask = self.tokenizer.mask_token
+        unmasker = self.unmasker
+
+        unmask_sentence = sentence
+        # 처음과 끝 부분을 [MASK]로 치환 후 추론할 때의 품질이 좋지 않음.
+        random_idx = random.randint(1, len(unmask_sentence.split()) - span)
+        
+        unmask_sentence = unmask_sentence.split()
+        # del unmask_sentence[random_idx:random_idx+span]
+        cache = []
+        for _ in range(span):
+            # 처음과 끝 부분을 [MASK]로 치환 후 추론할 때의 품질이 좋지 않음.
+            while cache and random_idx in cache:
+                random_idx = random.randint(1, len(unmask_sentence) - 2)
+            cache.append(random_idx)
+            unmask_sentence[random_idx] = mask
+            unmask_sentence = unmasker(" ".join(unmask_sentence))[0]['sequence']
+            unmask_sentence = unmask_sentence.split()
+        unmask_sentence = " ".join(unmask_sentence)
         unmask_sentence = unmask_sentence.replace("  ", " ")
 
-        return unmask_sentence
+        return unmask_sentence.strip()
 
-
-    def random_masking_insertion(self, sentence):
-        mask = self.electra_tokenizer.mask_token
-        unmasker = self.electra_unmasker
-        unmask_sentence = sentence.split()
-        random_idx = random.randint(0, len(unmask_sentence)-1)
-        unmask_sentence.insert(random_idx, mask)
-
+    def random_masking_insertion(self, sentence, span_ratio=0.15):
+        
+        span = int(round(len(sentence.split()) * span_ratio))
+        mask = self.tokenizer.mask_token
+        unmasker = self.unmasker
+        
         # Recover
-        unmask_result = unmasker(" ".join(unmask_sentence))
+        unmask_sentence = sentence
+        
+        for _ in range(span):
+            unmask_sentence = unmask_sentence.split()
+            random_idx = random.randint(0, len(unmask_sentence)-1)
+            unmask_sentence.insert(random_idx, mask)
+            unmask_sentence = unmasker(" ".join(unmask_sentence))[0]['sequence']
 
-        # unmask_token에 '##" 이나 특수기호만 들어가는 것을 방지.
-        if not re.findall('\W', unmask_result[0]['token_str']):
-            unmask_token = unmask_result[0]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-            
-        elif not re.findall('\W', unmask_result[1]['token_str']):
-            unmask_token = unmask_result[1]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-            
-        elif not re.findall('\W', unmask_result[2]['token_str']):
-            unmask_token = unmask_result[2]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-            
-        elif not re.findall('\W', unmask_result[3]['token_str']):
-            unmask_token = unmask_result[3]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-            
-        elif not re.findall('\W', unmask_result[4]['token_str']):
-            unmask_token = unmask_result[4]['token_str']
-            unmask_sentence[random_idx] = unmask_token
-        else:
-            # 만족하는 경우가 없다면 해당 문장에 대해서는 그냥 masking 취소.
-            return sentence
-
-        unmask_sentence = " ".join(unmask_sentence) 
         unmask_sentence = unmask_sentence.replace("  ", " ")
 
-        return unmask_sentence
-
-# BERT_aug = BERT_Augmentation()
-
-# func = BERT_aug.random_masking_replacement
-
-# ins = BERT_aug.random_masking_insertion
-
-# sentence = "이순신은 조선 중기의 무신이라고 전해진다."
-# for _ in range(5):
-#     result = func(sentence, span=2)
-#     print(result)
-
-
-# for _ in range(5):
-#     result = ins(sentence)
-#     print(result)
+        return unmask_sentence.strip()
