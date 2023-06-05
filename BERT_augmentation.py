@@ -11,18 +11,18 @@ class BERT_Augmentation():
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(self.model_name)
         self.unmasker = transformers.pipeline("fill-mask", model=self.model, tokenizer=self.tokenizer)
         random.seed(42)
-    def random_masking_replacement(self, sentence, span_ratio=0.15):
+    def random_masking_replacement(self, sentence, ratio=0.15):
         """Masking random eojeol of the sentence, and recover them using PLM.
 
         Args:
             sentence (str): Source sentence
-            span_ratio (int): Span ratio of masking
+            ratio (int): Ratio of masking
 
         Returns:
           str: Recovered sentence
         """
         
-        span = int(round(len(sentence.split()) * span_ratio))
+        span = int(round(len(sentence.split()) * ratio))
         
         # 품질 유지를 위해, 문장의 어절 수가 4 이하라면 원문장을 그대로 리턴합니다.
         if len(sentence.split()) <= 4:
@@ -51,9 +51,9 @@ class BERT_Augmentation():
 
         return unmask_sentence.strip()
 
-    def random_masking_insertion(self, sentence, span_ratio=0.15):
+    def random_masking_insertion(self, sentence, ratio=0.15):
         
-        span = int(round(len(sentence.split()) * span_ratio))
+        span = int(round(len(sentence.split()) * ratio))
         mask = self.tokenizer.mask_token
         unmasker = self.unmasker
         
