@@ -19,8 +19,8 @@ adverb_gloss_replacement = adverb_aug.adverb_gloss_replacement
 orig_train = pd.read_json('sts/datasets/klue-sts-v1.1_train.json')
 
 
-def apply_random_masking_replacement(x, span_ratio=0.15):
-    return random_masking_replacement(x, span_ratio=span_ratio)
+def apply_random_masking_replacement(x, ratio=0.15):
+    return random_masking_replacement(x, ratio=ratio)
 
 # dataset
  
@@ -41,10 +41,10 @@ random_masking_replacement_augset.reset_index().to_json('sts/datasets/klue-sts-v
 
 
 # random insertion 
-def apply_random_masking_insertion(x, span_ratio=0.15):
-    return random_masking_insertion(x, span_ratio=span_ratio)
+def apply_random_masking_insertion(x, ratio=0.15):
+    return random_masking_insertion(x, ratio=ratio)
 
-span_ratio = 0.15
+ratio = 0.15
 random_masking_insertion_train = orig_train.copy()
 pool = joblib.Parallel(n_jobs=8, prefer='threads')
 mapper = joblib.delayed(apply_random_masking_insertion)
@@ -63,7 +63,7 @@ random_masking_insertion_augset.reset_index().to_json('sts/datasets/klue-sts-v1.
 
 # # adverb
 adverb_train = orig_train.copy()
-def apply_adverb_gloss_replacement(df, span_ratio):
+def apply_adverb_gloss_replacement(df, ratio):
     df['sentence1'] = df['sentence1'].progress_apply(lambda x: adverb_gloss_replacement(x))
     df['sentence2'] = df['sentence2'].progress_apply(lambda x: adverb_gloss_replacement(x))
     return df
