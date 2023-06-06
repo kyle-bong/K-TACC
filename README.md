@@ -27,7 +27,7 @@ python augmentation.py
 |---|---|---|
 |BERT_Augmentation (Random Masking Replacement)|이순신은 매우 _뛰어난_ 장군이다.|이순신은 매우 _훌륭한_ 장군이다.|
 |BERT_Augmentation (Random Masking Insertion)|이순신은 매우 뛰어난 장군이다.|이순신은 매우 뛰어난 _조선의_ 장군이다.|
-|Adverb augmentation|이순신은 매우 뛰어난 장군이다.|이순신은 _보통을 훨씬 넘는 정도로_ 뛰어난 장군이다.
+|Adverb augmentation|이순신은 _매우_ 뛰어난 장군이다.|이순신은 _보통을 훨씬 넘는 정도로_ 뛰어난 장군이다.
 
 
 
