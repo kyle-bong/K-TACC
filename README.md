@@ -21,6 +21,15 @@ Adverb augmentation의 경우 사전 뜻풀이를 크롤링해오기 때문에 �
 ```
 python augmentation.py
 ```
+생성 예시
+|증강 방법|원본 문장|증강 문장|
+|---|---|---|
+|BERT_Augmentation (Random Masking Replacement)|이순신은 매우 _뛰어난_ 장군이다.|이순신은 매우 _훌륭한_ 장군이다.|
+|BERT_Augmentation (Random Masking Insertion)|이순신은 매우 뛰어난 장군이다.|이순신은 매우 뛰어난 _조선의_ 장군이다.|
+|Adverb augmentation|이순신은 매우 뛰어난 장군이다.|이순신은 _보통을 훨씬 넘는 정도로_ 뛰어난 장군이다.
+
+
+
 
 ### STS 성능 평가
 실행 전 wandb login이 필요합니다.
