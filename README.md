@@ -22,7 +22,7 @@ Adverb augmentation의 경우 사전 뜻풀이를 크롤링해오기 때문에 �
 python augmentation.py
 ```
 
-## 생성 예시
+### 생성 예시
 |증강 방법|원본 문장|증강 문장|
 |---|---|---|
 |BERT_Augmentation (Random Masking Replacement)|이순신은 매우 _뛰어난_ 장군이다.|이순신은 매우 _훌륭한_ 장군이다.|
