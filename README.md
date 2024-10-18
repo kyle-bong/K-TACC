@@ -3,6 +3,7 @@
 ## Overview
 - `BertAugmentation` : BERT based 모델을 활용하여, 의미상 자연스러운 토큰을 삽입하거나 대체하는 형식으로 문장 augmentation 수행
 - `Adverb_augmentation`: 부사를 그 부사의 뜻풀이로 교체하는 형식으로 문장 augmentation 수행
+- `LlmAugmentation`: Gemini 1.5 flash를 이용해 문장 패러프레이징 수행
 - 기존 EDA(Easy Data Augmentation), AEDA(An Easier Data Augmentation) 기법에 비해 의미적으로 좀 더 자연스러운 문장 생성 가능
 
 ## Usage
