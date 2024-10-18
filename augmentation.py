@@ -48,8 +48,7 @@ def apply_llm_augmentation(df, batch_size=5):
             augmented_sentences1.extend(paraphrased_batch)
         except Exception as e:
             print(f"Error processing batch {i} of sentence1: {e}")
-            augmented_sentences1.extend(batch)  # Use original sentences if error occurs
-
+            augmented_sentences1.extend(batch) 
     sentences2 = df['sentence2'].tolist()
     augmented_sentences2 = []
     for i in tqdm(range(0, len(sentences2), batch_size)):
@@ -61,7 +60,6 @@ def apply_llm_augmentation(df, batch_size=5):
             print(f"Error processing batch {i} of sentence2: {e}")
             augmented_sentences2.extend(batch)
 
-    # Assign augmented sentences back to the dataframe
     df_aug['sentence1'] = augmented_sentences1
     df_aug['sentence2'] = augmented_sentences2
 
