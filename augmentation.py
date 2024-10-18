@@ -1,6 +1,7 @@
 import pandas as pd
 from utils.BertAugmentation import BertAugmentation
 from utils.adverb_augmentation import AdverbAugmentation
+from utils.LlmAugmentation import LlmAugmentation
 from utils.aeda import aeda
 from utils.koreda import synonym_replacement, random_deletion, random_swap, random_insertion
 from tqdm import tqdm
@@ -24,6 +25,47 @@ def apply_augmentation(df, aug_func, n_jobs=8):
     df['sentence2'] = pool(tqdm(tasks_2))
     
     return df
+
+def apply_llm_augmentation(df, batch_size=5):
+    """LlmAugmentation을 배치 단위로 적용합니다.
+
+    Args:
+        df (pd.DataFrame): 데이터셋
+        batch_size (int): 배치 당 문장 개수
+
+    Returns:
+        df_aug (pd.DataFrame): 증강된 데이터셋
+    """
+    llm_aug = LlmAugmentation()
+    df_aug = df.copy()
+
+    sentences1 = df['sentence1'].tolist()
+    augmented_sentences1 = []
+    for i in tqdm(range(0, len(sentences1), batch_size)):
+        batch = sentences1[i:i + batch_size]
+        try:
+            paraphrased_batch = llm_aug.generate_paraphrased_sentence(batch)
+            augmented_sentences1.extend(paraphrased_batch)
+        except Exception as e:
+            print(f"Error processing batch {i} of sentence1: {e}")
+            augmented_sentences1.extend(batch)  # Use original sentences if error occurs
+
+    sentences2 = df['sentence2'].tolist()
+    augmented_sentences2 = []
+    for i in tqdm(range(0, len(sentences2), batch_size)):
+        batch = sentences2[i:i + batch_size]
+        try:
+            paraphrased_batch = llm_aug.generate_paraphrased_sentence(batch)
+            augmented_sentences2.extend(paraphrased_batch)
+        except Exception as e:
+            print(f"Error processing batch {i} of sentence2: {e}")
+            augmented_sentences2.extend(batch)
+
+    # Assign augmented sentences back to the dataframe
+    df_aug['sentence1'] = augmented_sentences1
+    df_aug['sentence2'] = augmented_sentences2
+
+    return df_aug
 
 def save_augmented_dataset(df, filename):
     """중복 제거 후 증강된 데이터셋 저장"""
@@ -76,3 +118,11 @@ if __name__ == "__main__":
     aeda_train['sentence1'] = aeda_train['sentence1'].progress_apply(aeda)
     aeda_train['sentence2'] = aeda_train['sentence2'].progress_apply(aeda)
     save_augmented_dataset(pd.concat([orig_train, aeda_train]), 'sts/datasets/klue-sts-v1.1_train_aeda_augset.json')
+
+    # Apply LLM augmentation
+    # 실행 전 과금 여부에 주의하시기 바랍니다.
+    llm_train = orig_train.copy()
+    
+    # batch inference를 통해 전체 요청 수를 줄입니다.
+    llm_augmented_train = apply_llm_augmentation(orig_train, batch_size=32)
+    save_augmented_dataset(pd.concat([orig_train, llm_augmented_train]), 'sts/dataset/klue-sts-v1.1_train_llm_augset.json')
