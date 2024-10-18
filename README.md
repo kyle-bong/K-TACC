@@ -12,11 +12,10 @@ bash install.sh
 ```
 
 ### Pilot test
-`augmentation.ipynb` 파일에서 여러 증강 기법의 샘플을 확인해보실 수 있습니다.
+`test.ipynb` 파일에서 여러 증강 기법의 사용법 및 샘플을 확인해보실 수 있습니다.
 
 ### 증강 데이터 생성
 실행 전 데이터셋의 경로, 저장할 파일 이름을 직접 지정해야 합니다.
-Adverb augmentation의 경우 사전 뜻풀이를 크롤링해오기 때문에 시간이 오래걸릴 수 있습니다.
 증강 적용 후 원본 데이터셋과 중복이 발생할 수 있으므로 중복을 제거하는 과정을 거칩니다. 이 때문에 각 증강 방법마다 결과로 나오는 데이터셋의 크기가 서로 다를 수 있습니다. 
 ```
 python augmentation.py
@@ -27,12 +26,16 @@ python augmentation.py
 |---|---|---|
 |BertAugmentation (Random Masking Replacement)|이순신은 매우 _뛰어난_ 장군이다.|이순신은 매우 _훌륭한_ 장군이다.|
 |BertAugmentation (Random Masking Insertion)|이순신은 매우 뛰어난 장군이다.|이순신은 매우 뛰어난 _조선의_ 장군이다.|
-|Adverb augmentation|이순신은 _매우_ 뛰어난 장군이다.|이순신은 _보통을 훨씬 넘는 정도로_ 뛰어난 장군이다.
-
+|AdverbAugmentation|이순신은 _매우_ 뛰어난 장군이다.|이순신은 _보통을 훨씬 넘는 정도로_ 뛰어난 장군이다.|
+|LlmAugmentation|이순신은 매우 뛰어난 장군이다.|이순신은 매우 유능한 장수입니다.|
 
 
 
 ### STS 성능 평가
+
+__2024년 10월 18일, Gemini 1.5 Flash 모델을 활용한 LLM Augmentation 방식을 추가하였습니다. test.ipynb에서 사용법을 확인하실 수 있습니다. 정성적인 품질은 증강 방법 중에서 LLM Augmentation이 가장 좋습니다.__
+
+
 실행 전 wandb login이 필요합니다.
 ```
 cd sts
@@ -49,7 +52,7 @@ bash train.sh
 |EDA (Random Deletion) | 0.8960|
 |EDA (Random Swap) | 0.9243 |
 |EDA (Random Synonym Replacement) | 0.9250 |
-|EDA (Random Insertion | 0.9259 |
+|EDA (Random Insertion) | 0.9259 |
 |AEDA | 0.9252 |
 |Adverb augmentation | 0.9299 |
 |BertAugmentation (Random Masking Replacement) | 0.9023 |
@@ -57,6 +60,7 @@ bash train.sh
 
 실험 결과, BertAugmentation (Random Masking Insertion)이 가장 성능이 높게 나타났습니다. Adverb augmentation, EDA (Random Insertion), AEDA, EDA (Random Synonym Replacement), EDA (Random Swap)도 base에 비해 높은 성능을 보였습니다. 한편, EDA (Random Deletion), BertAugmentation (Random Masking Replacement) 방식은 base 모델보다 성능이 떨어지는 것으로 나타났습니다. 이 두 방식은 문장 내에서 단어를 무작위로 선택하여 삭제하거나 다른 단어로 교체한다는 점에서, 문장 내에서 핵심적인 의미를 지니는 단어를 훼손할 가능성이 있습니다. 반면 성능이 좋게 나온 BERT Augmentation (Random Masking Insertion), AEDA, EDA (Random Insertion) 방식은 원본 문장의 단어는 그대로 보존한 채 단어나 기호를 추가하는 방식이기 때문에 성능이 좋게 나온 것으로 보입니다.
 그리고 Adverb augmentation의 경우 문장에서 optional한 역할을 하는 부사를 바꿔주는 것이기 때문에 원본 문장의 의미 훼손이 적었을 것으로 판단됩니다.
+
 
 
 ## Reference
