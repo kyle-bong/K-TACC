@@ -1,5 +1,5 @@
 import pandas as pd
-from utils.BERT_augmentation import BERT_Augmentation
+from utils.BertAugmentation import BertAugmentation
 from utils.adverb_augmentation import AdverbAugmentation
 from utils.aeda import aeda
 from utils.koreda import synonym_replacement, random_deletion, random_swap, random_insertion
@@ -9,7 +9,7 @@ from functools import partial
 
 tqdm.pandas()
 
-BERT_aug = BERT_Augmentation()
+BERT_aug = BertAugmentation()
 adverb_aug = AdverbAugmentation()
 
 def apply_augmentation(df, aug_func, n_jobs=8):

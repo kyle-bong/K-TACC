@@ -1,7 +1,7 @@
 # 문맥을 고려한 한국어 텍스트 데이터 증강 (Korean Text Augmentation Considering Context, **K-TACC**)
 
 ## Overview
-- `BERT_augmentation` : BERT based 모델을 활용하여, 의미상 자연스러운 토큰을 삽입하거나 대체하는 형식으로 문장 augmentation 수행
+- `BertAugmentation` : BERT based 모델을 활용하여, 의미상 자연스러운 토큰을 삽입하거나 대체하는 형식으로 문장 augmentation 수행
 - `Adverb_augmentation`: 부사를 그 부사의 뜻풀이로 교체하는 형식으로 문장 augmentation 수행
 - 기존 EDA(Easy Data Augmentation), AEDA(An Easier Data Augmentation) 기법에 비해 의미적으로 좀 더 자연스러운 문장 생성 가능
 
@@ -25,8 +25,8 @@ python augmentation.py
 ### 증강 예시
 |증강 방법|원본 문장|증강 문장|
 |---|---|---|
-|BERT_Augmentation (Random Masking Replacement)|이순신은 매우 _뛰어난_ 장군이다.|이순신은 매우 _훌륭한_ 장군이다.|
-|BERT_Augmentation (Random Masking Insertion)|이순신은 매우 뛰어난 장군이다.|이순신은 매우 뛰어난 _조선의_ 장군이다.|
+|BertAugmentation (Random Masking Replacement)|이순신은 매우 _뛰어난_ 장군이다.|이순신은 매우 _훌륭한_ 장군이다.|
+|BertAugmentation (Random Masking Insertion)|이순신은 매우 뛰어난 장군이다.|이순신은 매우 뛰어난 _조선의_ 장군이다.|
 |Adverb augmentation|이순신은 _매우_ 뛰어난 장군이다.|이순신은 _보통을 훨씬 넘는 정도로_ 뛰어난 장군이다.
 
 
@@ -52,10 +52,10 @@ bash train.sh
 |EDA (Random Insertion | 0.9259 |
 |AEDA | 0.9252 |
 |Adverb augmentation | 0.9299 |
-|BERT_Augmentation (Random Masking Replacement) | 0.9023 |
-|BERT_Augmentation (Random Masking Insertion) | **0.9300** |
+|BertAugmentation (Random Masking Replacement) | 0.9023 |
+|BertAugmentation (Random Masking Insertion) | **0.9300** |
 
-실험 결과, BERT_Augmentation (Random Masking Insertion)이 가장 성능이 높게 나타났습니다. Adverb augmentation, EDA (Random Insertion), AEDA, EDA (Random Synonym Replacement), EDA (Random Swap)도 base에 비해 높은 성능을 보였습니다. 한편, EDA (Random Deletion), BERT_Augmentation (Random Masking Replacement) 방식은 base 모델보다 성능이 떨어지는 것으로 나타났습니다. 이 두 방식은 문장 내에서 단어를 무작위로 선택하여 삭제하거나 다른 단어로 교체한다는 점에서, 문장 내에서 핵심적인 의미를 지니는 단어를 훼손할 가능성이 있습니다. 반면 성능이 좋게 나온 BERT Augmentation (Random Masking Insertion), AEDA, EDA (Random Insertion) 방식은 원본 문장의 단어는 그대로 보존한 채 단어나 기호를 추가하는 방식이기 때문에 성능이 좋게 나온 것으로 보입니다.
+실험 결과, BertAugmentation (Random Masking Insertion)이 가장 성능이 높게 나타났습니다. Adverb augmentation, EDA (Random Insertion), AEDA, EDA (Random Synonym Replacement), EDA (Random Swap)도 base에 비해 높은 성능을 보였습니다. 한편, EDA (Random Deletion), BertAugmentation (Random Masking Replacement) 방식은 base 모델보다 성능이 떨어지는 것으로 나타났습니다. 이 두 방식은 문장 내에서 단어를 무작위로 선택하여 삭제하거나 다른 단어로 교체한다는 점에서, 문장 내에서 핵심적인 의미를 지니는 단어를 훼손할 가능성이 있습니다. 반면 성능이 좋게 나온 BERT Augmentation (Random Masking Insertion), AEDA, EDA (Random Insertion) 방식은 원본 문장의 단어는 그대로 보존한 채 단어나 기호를 추가하는 방식이기 때문에 성능이 좋게 나온 것으로 보입니다.
 그리고 Adverb augmentation의 경우 문장에서 optional한 역할을 하는 부사를 바꿔주는 것이기 때문에 원본 문장의 의미 훼손이 적었을 것으로 판단됩니다.
 
 

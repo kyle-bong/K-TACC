@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 
-class BERT_Augmentation():
+class BertAugmentation():
     def __init__(self):
         self.model_name = 'monologg/koelectra-base-v3-generator'
         self.model = transformers.AutoModelForMaskedLM.from_pretrained(self.model_name)
