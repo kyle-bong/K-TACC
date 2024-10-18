@@ -7,6 +7,8 @@ selenium
 bs4
 joblib
 quickspacer
+# gemini
+google-generativeai==0.8.3
 
 # for fine-tuning
 pyYAML
@@ -15,7 +17,6 @@ tqdm
 torchmetrics
 pandas
 omegaconf
-
 
 # dev
 wandb
